@@ -20,6 +20,10 @@ type Player struct {
 	movingLeft  bool
 	movingUp    bool
 	movingDown  bool
+	facingRight bool
+	facingLeft  bool
+	facingUp    bool
+	facingDown  bool
 }
 
 func newPlayer() *Player {
@@ -48,46 +52,83 @@ func (p *Player) Type() string {
 	return "player"
 }
 
+func (p *Player) face(dir string) {
+	p.facingDown = false
+	p.facingUp = false
+	p.facingLeft = false
+	p.facingRight = false
+
+	switch dir {
+	case "up":
+		p.facingUp = true
+	case "down":
+		p.facingDown = true
+	case "left":
+		p.facingLeft = true
+	case "right":
+		p.facingRight = true
+	}
+
+}
+
 func (p *Player) Update() {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
 		p.movingRight = true
+		p.face("right")
 	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowRight) {
 		p.movingRight = false
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
 		p.movingLeft = true
+		p.face("left")
 	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowLeft) {
 		p.movingLeft = false
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
 		p.movingUp = true
+		p.face("up")
 	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowUp) {
 		p.movingUp = false
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
 		p.movingDown = true
+		p.face("down")
 	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowDown) {
 		p.movingDown = false
 	}
 
 	if p.movingLeft {
-		p.x -= p.speed
 		p.img = p.imgs[0]
+		p.x -= p.speed
 	}
 	if p.movingRight {
-		p.x += p.speed
 		p.img = p.imgs[0]
+		p.x += p.speed
 	}
 	if p.movingUp {
-		p.y -= p.speed
 		p.img = p.imgs[1]
+		p.y -= p.speed
 	}
 	if p.movingDown {
-		p.y += p.speed
 		p.img = p.imgs[1]
+		p.y += p.speed
+	}
+
+	if p.x <= 0 {
+		p.x = 0
+	}
+	if p.x >= LEVELWIDTH-SPRITESIZE {
+		p.x = LEVELWIDTH - SPRITESIZE
+	}
+
+	if p.y <= 0 {
+		p.y = 0
+	}
+	if p.y >= LEVELHEIGHT-SPRITESIZE {
+		p.y = LEVELHEIGHT - SPRITESIZE
 	}
 
 }
@@ -99,5 +140,7 @@ func (p *Player) Coords() (x, y int) {
 func (p *Player) Draw(screen *ebiten.Image) {
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(float64(p.x), float64(p.y))
+	// sx, sy := p.img.Size()
+	// opts.GeoM.Scale(float64(SPRITESIZE/sx), float64(SPRITESIZE/sy))
 	screen.DrawImage(p.img, opts)
 }

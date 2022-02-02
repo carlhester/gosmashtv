@@ -10,8 +10,9 @@ import (
 )
 
 type Game struct {
-	player *Player
-	debug  bool
+	player  *Player
+	bullets []*bullet
+	debug   bool
 }
 
 func newGame() *Game {
@@ -35,8 +36,22 @@ func (g *Game) Update() error {
 		g.debug = !g.debug
 	}
 
-	g.player.Update()
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		if g.player.facingDown {
+			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, false, true, false, false))
+		} else if g.player.facingUp {
+			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, true, false, false, false))
+		} else if g.player.facingLeft {
+			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, false, false, true, false))
+		} else if g.player.facingRight {
+			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, false, false, false, true))
+		}
+	}
 
+	g.player.Update()
+	for _, bullet := range g.bullets {
+		bullet.Update()
+	}
 	return nil
 }
 
@@ -47,6 +62,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.debug {
 		px, py := g.player.Coords()
 		ebitenutil.DebugPrint(screen, fmt.Sprintf("(%d, %d)", px, py))
+		fmt.Println(g.player.img.Size())
+	}
+
+	for _, bullet := range g.bullets {
+		bullet.Draw(screen)
 	}
 }
 
