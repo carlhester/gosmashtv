@@ -6,24 +6,42 @@ type bullet struct {
 	img         *ebiten.Image
 	x           int
 	y           int
+	w           int
+	h           int
 	speed       int
 	movingRight bool
 	movingLeft  bool
 	movingUp    bool
 	movingDown  bool
+	rect        rect
+	active      bool
 }
 
 func newBullet(x, y int, u, d, l, r bool) *bullet {
 	img := ebiten.NewImage(1, 1)
+
+	w, h := img.Size()
+
+	rect := rect{
+		t: y,
+		b: y + h,
+		l: x,
+		r: x + w,
+	}
+
 	return &bullet{
 		x:           x,
 		y:           y,
+		w:           w,
+		h:           h,
 		img:         img,
 		speed:       5,
 		movingRight: r,
 		movingLeft:  l,
 		movingUp:    u,
 		movingDown:  d,
+		rect:        rect,
+		active:      true,
 	}
 }
 
@@ -39,6 +57,26 @@ func (b *bullet) Update() {
 	} else if b.movingRight {
 		b.x += b.speed
 	}
+
+	if b.x <= 0 {
+		b.active = false
+	}
+	if b.x >= LEVELWIDTH {
+		b.active = false
+	}
+
+	if b.y <= 0 {
+		b.active = false
+	}
+	if b.y >= LEVELHEIGHT-b.h {
+		b.active = false
+	}
+
+	b.w, b.h = b.img.Size()
+	b.rect.t = b.y
+	b.rect.b = b.y + b.h
+	b.rect.l = b.x
+	b.rect.r = b.x + b.w
 
 }
 

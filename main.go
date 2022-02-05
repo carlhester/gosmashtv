@@ -13,6 +13,9 @@ const (
 	LEVELHEIGHT = SPRITESIZE * 36
 )
 
+const F = false
+const T = true
+
 var (
 	WHITE = color.RGBA{0xff, 0xff, 0xff, 0xff}
 	BLACK = color.RGBA{0x0, 0x0, 0x0, 0xff}

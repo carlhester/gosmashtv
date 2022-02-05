@@ -11,16 +11,21 @@ import (
 
 type Game struct {
 	player  *Player
-	bullets []*bullet
+	bullets *bullets
 	debug   bool
+	enemies []*enemy
 }
 
 func newGame() *Game {
 	p := newPlayer()
 
+	enemies := []*enemy{newEnemy(50, 50, false, false, false, false)}
+
 	return &Game{
-		player: p,
-		debug:  true,
+		player:  p,
+		debug:   true,
+		bullets: &bullets{p: p},
+		enemies: enemies,
 	}
 }
 
@@ -36,22 +41,12 @@ func (g *Game) Update() error {
 		g.debug = !g.debug
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		if g.player.facingDown {
-			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, false, true, false, false))
-		} else if g.player.facingUp {
-			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, true, false, false, false))
-		} else if g.player.facingLeft {
-			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, false, false, true, false))
-		} else if g.player.facingRight {
-			g.bullets = append(g.bullets, newBullet(g.player.x, g.player.y, false, false, false, true))
-		}
+	g.player.Update()
+	g.bullets.update()
+	for _, e := range g.enemies {
+		e.Update()
 	}
 
-	g.player.Update()
-	for _, bullet := range g.bullets {
-		bullet.Update()
-	}
 	return nil
 }
 
@@ -60,14 +55,20 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	g.player.Draw(screen)
 	if g.debug {
-		px, py := g.player.Coords()
-		ebitenutil.DebugPrint(screen, fmt.Sprintf("(%d, %d)", px, py))
-		fmt.Println(g.player.img.Size())
+		ebitenutil.DebugPrint(screen, fmt.Sprintf("(T: %d, B: %d, L:%d, R:%d, shots: %d)",
+			g.player.rect.t,
+			g.player.rect.b,
+			g.player.rect.l,
+			g.player.rect.r,
+			len(g.bullets.all())))
 	}
 
-	for _, bullet := range g.bullets {
-		bullet.Draw(screen)
+	g.bullets.update()
+	g.bullets.draw(screen)
+	for _, e := range g.enemies {
+		e.Draw(screen)
 	}
+
 }
 
 func (g *Game) Layout(w, h int) (screenWidth, screenHeight int) {

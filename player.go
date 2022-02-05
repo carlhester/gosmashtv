@@ -15,6 +15,8 @@ type Player struct {
 	img         *ebiten.Image
 	x           int
 	y           int
+	w           int
+	h           int
 	speed       int
 	movingRight bool
 	movingLeft  bool
@@ -24,6 +26,7 @@ type Player struct {
 	facingLeft  bool
 	facingUp    bool
 	facingDown  bool
+	rect
 }
 
 func newPlayer() *Player {
@@ -39,11 +42,25 @@ func newPlayer() *Player {
 	imgs = append(imgs, img)
 	imgs = append(imgs, img2)
 
+	w, h := img.Size()
+	x := 20
+	y := 50
+
+	rect := rect{
+		t: y,
+		b: y + h,
+		l: x,
+		r: x + w,
+	}
+
 	return &Player{
-		x:     0,
-		y:     0,
+		x:     x,
+		y:     y,
+		w:     w,
+		h:     h,
 		imgs:  imgs,
 		img:   imgs[0],
+		rect:  rect,
 		speed: 4,
 	}
 }
@@ -72,31 +89,31 @@ func (p *Player) face(dir string) {
 }
 
 func (p *Player) Update() {
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyF) {
 		p.movingRight = true
 		p.face("right")
-	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowRight) {
+	} else if inpututil.IsKeyJustReleased(ebiten.KeyF) {
 		p.movingRight = false
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyS) {
 		p.movingLeft = true
 		p.face("left")
-	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowLeft) {
+	} else if inpututil.IsKeyJustReleased(ebiten.KeyS) {
 		p.movingLeft = false
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyE) {
 		p.movingUp = true
 		p.face("up")
-	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowUp) {
+	} else if inpututil.IsKeyJustReleased(ebiten.KeyE) {
 		p.movingUp = false
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		p.movingDown = true
 		p.face("down")
-	} else if inpututil.IsKeyJustReleased(ebiten.KeyArrowDown) {
+	} else if inpututil.IsKeyJustReleased(ebiten.KeyD) {
 		p.movingDown = false
 	}
 
@@ -120,16 +137,22 @@ func (p *Player) Update() {
 	if p.x <= 0 {
 		p.x = 0
 	}
-	if p.x >= LEVELWIDTH-SPRITESIZE {
-		p.x = LEVELWIDTH - SPRITESIZE
+	if p.x >= LEVELWIDTH-p.w {
+		p.x = LEVELWIDTH - p.w
 	}
 
 	if p.y <= 0 {
 		p.y = 0
 	}
-	if p.y >= LEVELHEIGHT-SPRITESIZE {
-		p.y = LEVELHEIGHT - SPRITESIZE
+	if p.y >= LEVELHEIGHT-p.h {
+		p.y = LEVELHEIGHT - p.h
 	}
+
+	p.w, p.h = p.img.Size()
+	p.rect.t = p.y
+	p.rect.b = p.y + p.h
+	p.rect.l = p.x
+	p.rect.r = p.x + p.w
 
 }
 
@@ -140,7 +163,5 @@ func (p *Player) Coords() (x, y int) {
 func (p *Player) Draw(screen *ebiten.Image) {
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(float64(p.x), float64(p.y))
-	// sx, sy := p.img.Size()
-	// opts.GeoM.Scale(float64(SPRITESIZE/sx), float64(SPRITESIZE/sy))
 	screen.DrawImage(p.img, opts)
 }
