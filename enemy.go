@@ -8,12 +8,12 @@ import (
 )
 
 type enemy struct {
-	img *ebiten.Image
-	x   int
-	y   int
-	w   int
-	h   int
-	// speed       int
+	img         *ebiten.Image
+	x           int
+	y           int
+	w           int
+	h           int
+	speed       int
 	movingRight bool
 	movingLeft  bool
 	movingUp    bool
@@ -38,10 +38,27 @@ func newEnemy(x, y int, u, d, l, r bool) *enemy {
 		movingUp:    u,
 		movingDown:  d,
 		active:      true,
+		speed:       1,
 	}
 }
 
 func (e *enemy) update(p *Player) {
+	if p.x > e.x {
+		e.x += 1
+	}
+
+	if p.x < e.x {
+		e.x -= 1
+	}
+
+	if p.y > e.y {
+		e.y += 1
+	}
+
+	if p.y < e.y {
+		e.y -= 1
+	}
+
 	e.w, e.h = e.img.Size()
 	e.rect.t = e.y
 	e.rect.b = e.y + e.h
