@@ -65,10 +65,6 @@ func newPlayer() *Player {
 	}
 }
 
-func (p *Player) Type() string {
-	return "player"
-}
-
 func (p *Player) face(dir string) {
 	p.facingDown = false
 	p.facingUp = false

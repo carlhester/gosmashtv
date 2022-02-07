@@ -7,7 +7,8 @@ import (
 
 type bullets struct {
 	bullets []*bullet
-	p       *Player
+	player  *Player
+	enemies *enemies
 }
 
 func (b *bullets) all() []*bullet {
@@ -16,16 +17,16 @@ func (b *bullets) all() []*bullet {
 
 func (b *bullets) handleInput() {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
-		b.bullets = append(b.bullets, newBullet(b.p.x+(b.p.w/2), b.p.y, T, F, F, F))
+		b.bullets = append(b.bullets, newBullet(b.player.x+(b.player.w/2), b.player.y, T, F, F, F))
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
-		b.bullets = append(b.bullets, newBullet(b.p.x+(b.p.w/2), b.p.y, F, T, F, F))
+		b.bullets = append(b.bullets, newBullet(b.player.x+(b.player.w/2), b.player.y, F, T, F, F))
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
-		b.bullets = append(b.bullets, newBullet(b.p.x, b.p.y+(b.p.h/2), F, F, T, F))
+		b.bullets = append(b.bullets, newBullet(b.player.x, b.player.y+(b.player.h/2), F, F, T, F))
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
-		b.bullets = append(b.bullets, newBullet(b.p.x, b.p.y+(b.p.h/2), F, F, F, T))
+		b.bullets = append(b.bullets, newBullet(b.player.x, b.player.y+(b.player.h/2), F, F, F, T))
 	}
 
 }
@@ -43,11 +44,13 @@ func (b *bullets) refreshActive() {
 
 func (b *bullets) update() {
 	b.handleInput()
-	b.refreshActive()
 
 	for _, bullet := range b.bullets {
-		bullet.Update()
+		bullet.Update(b.enemies.enemies)
 	}
+
+	b.refreshActive()
+
 }
 
 func (b *bullets) draw(screen *ebiten.Image) {

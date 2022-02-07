@@ -17,5 +17,4 @@ func collide(a rect, b rect) bool {
 		return F
 	}
 	return T
-
 }

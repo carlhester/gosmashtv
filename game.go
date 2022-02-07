@@ -13,19 +13,20 @@ type Game struct {
 	player  *Player
 	bullets *bullets
 	debug   bool
-	enemies []*enemy
+	enemies *enemies
 }
 
 func newGame() *Game {
 	p := newPlayer()
 
-	enemies := []*enemy{newEnemy(50, 50, false, false, false, false)}
+	levelEnemies := []*enemy{newEnemy(50, 50, false, false, false, false)}
+	enemies := &enemies{enemies: levelEnemies}
 
 	return &Game{
 		player:  p,
 		debug:   true,
-		bullets: &bullets{p: p},
 		enemies: enemies,
+		bullets: &bullets{player: p, enemies: enemies},
 	}
 }
 
@@ -43,9 +44,7 @@ func (g *Game) Update() error {
 
 	g.player.Update()
 	g.bullets.update()
-	for _, e := range g.enemies {
-		e.Update()
-	}
+	g.enemies.update()
 
 	return nil
 }
@@ -55,19 +54,18 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	g.player.Draw(screen)
 	if g.debug {
-		ebitenutil.DebugPrint(screen, fmt.Sprintf("(T: %d, B: %d, L:%d, R:%d, shots: %d)",
+		ebitenutil.DebugPrint(screen, fmt.Sprintf("(T: %d, B: %d, L:%d, R:%d, shots: %d, enemies: %d)",
 			g.player.rect.t,
 			g.player.rect.b,
 			g.player.rect.l,
 			g.player.rect.r,
-			len(g.bullets.all())))
+			len(g.bullets.all()),
+			len(g.enemies.enemies),
+		))
 	}
 
-	g.bullets.update()
 	g.bullets.draw(screen)
-	for _, e := range g.enemies {
-		e.Draw(screen)
-	}
+	g.enemies.draw(screen)
 
 }
 

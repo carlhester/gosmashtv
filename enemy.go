@@ -11,19 +11,19 @@ type enemy struct {
 	img *ebiten.Image
 	x   int
 	y   int
-	// w           int
-	// h           int
+	w   int
+	h   int
 	// speed       int
 	movingRight bool
 	movingLeft  bool
 	movingUp    bool
 	movingDown  bool
-	// rect        rect
-	active bool
+	rect        rect
+	active      bool
 }
 
 func newEnemy(x, y int, u, d, l, r bool) *enemy {
-	sprite, _, err := ebitenutil.NewImageFromFile("./assets/slime.png")
+	sprite, _, err := ebitenutil.NewImageFromFile("./assets/enemy.png")
 	if err != nil {
 		panic(err)
 	}
@@ -41,12 +41,16 @@ func newEnemy(x, y int, u, d, l, r bool) *enemy {
 	}
 }
 
-func (e *enemy) Update() {
+func (e *enemy) update() {
+	e.w, e.h = e.img.Size()
+	e.rect.t = e.y
+	e.rect.b = e.y + e.h
+	e.rect.l = e.x
+	e.rect.r = e.x + e.w
 }
 
 func (e *enemy) Draw(screen *ebiten.Image) {
 	opts := &ebiten.DrawImageOptions{}
-	// opts.ColorM.Translate(float64(0x00), float64(0x22), float64(0x0), float64(0xFF))
 	opts.GeoM.Translate(float64(e.x), float64(e.y))
 	screen.DrawImage(e.img, opts)
 }
