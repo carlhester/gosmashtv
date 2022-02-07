@@ -4,11 +4,12 @@ import "github.com/hajimehoshi/ebiten/v2"
 
 type enemies struct {
 	enemies []*enemy
+	p       *Player
 }
 
 func (e *enemies) update() {
 	for _, enemy := range e.enemies {
-		enemy.update()
+		enemy.update(e.p)
 	}
 	e.refreshActive()
 }

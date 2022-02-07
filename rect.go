@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type rect struct {
 	t int
 	b int
@@ -8,13 +10,16 @@ type rect struct {
 }
 
 func collide(a rect, b rect) bool {
-	// if the bottom of B is higher than the top of A
-	if b.b > a.t {
-		return F
+	if a.r > b.l {
+		if a.l < b.r {
+			if a.b > b.t {
+				if a.t < b.b {
+					fmt.Println("A: ", a, "B: ", b)
+					return T
+				}
+			}
+		}
 	}
 
-	if b.r < a.l {
-		return F
-	}
-	return T
+	return F
 }

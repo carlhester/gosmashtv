@@ -41,7 +41,7 @@ func newEnemy(x, y int, u, d, l, r bool) *enemy {
 	}
 }
 
-func (e *enemy) update() {
+func (e *enemy) update(p *Player) {
 	e.w, e.h = e.img.Size()
 	e.rect.t = e.y
 	e.rect.b = e.y + e.h

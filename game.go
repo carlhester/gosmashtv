@@ -19,8 +19,16 @@ type Game struct {
 func newGame() *Game {
 	p := newPlayer()
 
-	levelEnemies := []*enemy{newEnemy(50, 50, false, false, false, false)}
-	enemies := &enemies{enemies: levelEnemies}
+	levelEnemies := []*enemy{
+		newEnemy(100, 100, false, false, false, false),
+		newEnemy(150, 100, false, false, false, false),
+		newEnemy(250, 100, false, false, false, false),
+		newEnemy(100, 200, false, false, false, false),
+	}
+	enemies := &enemies{
+		enemies: levelEnemies,
+		p:       p,
+	}
 
 	return &Game{
 		player:  p,
