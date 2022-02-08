@@ -48,7 +48,7 @@ func newBullet(x, y int, u, d, l, r bool) *bullet {
 func (b *bullet) Update(enemies []*enemy) {
 	for _, e := range enemies {
 		if collide(b.rect, e.rect) {
-			e.active = false
+			e.hp -= 1
 		}
 
 	}

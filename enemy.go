@@ -20,6 +20,7 @@ type enemy struct {
 	movingDown  bool
 	rect        rect
 	active      bool
+	hp          int
 }
 
 func newEnemy(x, y int, u, d, l, r bool) *enemy {
@@ -39,6 +40,7 @@ func newEnemy(x, y int, u, d, l, r bool) *enemy {
 		movingDown:  d,
 		active:      true,
 		speed:       1,
+		hp:          1,
 	}
 }
 
@@ -64,6 +66,10 @@ func (e *enemy) update(p *Player) {
 	e.rect.b = e.y + e.h
 	e.rect.l = e.x
 	e.rect.r = e.x + e.w
+
+	if e.hp <= 0 {
+		e.active = false
+	}
 }
 
 func (e *enemy) Draw(screen *ebiten.Image) {
