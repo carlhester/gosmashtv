@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type bullets struct {
@@ -13,22 +12,6 @@ type bullets struct {
 
 func (b *bullets) all() []*bullet {
 	return b.bullets
-}
-
-func (b *bullets) handleInput() {
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
-		b.bullets = append(b.bullets, newBullet(b.player.x+(b.player.w/2), b.player.y, T, F, F, F))
-	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
-		b.bullets = append(b.bullets, newBullet(b.player.x+(b.player.w/2), b.player.y, F, T, F, F))
-	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
-		b.bullets = append(b.bullets, newBullet(b.player.x, b.player.y+(b.player.h/2), F, F, T, F))
-	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
-		b.bullets = append(b.bullets, newBullet(b.player.x, b.player.y+(b.player.h/2), F, F, F, T))
-	}
-
 }
 
 func (b *bullets) refreshActive() {
@@ -43,8 +26,6 @@ func (b *bullets) refreshActive() {
 }
 
 func (b *bullets) update() {
-	b.handleInput()
-
 	for _, bullet := range b.bullets {
 		bullet.Update(b.enemies.enemies)
 	}

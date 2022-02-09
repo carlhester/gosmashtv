@@ -27,22 +27,26 @@ type Player struct {
 	facingUp    bool
 	facingDown  bool
 	rect
+	Bullets *bullets
 }
 
 func newPlayer() *Player {
-	sprite, _, err := ebitenutil.NewImageFromFile("./assets/slime.png")
+	sprite, _, err := ebitenutil.NewImageFromFile("./assets/player.png")
 	if err != nil {
 		panic(err)
 	}
 
-	img := sprite.SubImage(image.Rect(1, 1, 7, 7)).(*ebiten.Image)
-	img2 := sprite.SubImage(image.Rect(9, 2, 15, 7)).(*ebiten.Image)
-
 	imgs := []*ebiten.Image{}
+	img := sprite.SubImage(image.Rect(0, 0, 6, 6)).(*ebiten.Image)
 	imgs = append(imgs, img)
-	imgs = append(imgs, img2)
+	img = sprite.SubImage(image.Rect(7, 0, 13, 6)).(*ebiten.Image)
+	imgs = append(imgs, img)
+	img = sprite.SubImage(image.Rect(12, 0, 18, 6)).(*ebiten.Image)
+	imgs = append(imgs, img)
+	img = sprite.SubImage(image.Rect(17, 0, 23, 6)).(*ebiten.Image)
+	imgs = append(imgs, img)
 
-	w, h := img.Size()
+	w, h := imgs[0].Size()
 	x := 20
 	y := 50
 
@@ -113,20 +117,33 @@ func (p *Player) Update() {
 		p.movingDown = false
 	}
 
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+		p.Bullets.bullets = append(p.Bullets.bullets, newBullet(p.x+(p.w/2), p.y, T, F, F, F))
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+		p.Bullets.bullets = append(p.Bullets.bullets, newBullet(p.x+(p.w/2), p.y, F, T, F, F))
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
+		p.Bullets.bullets = append(p.Bullets.bullets, newBullet(p.x, p.y+(p.h/2), F, F, T, F))
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+		p.Bullets.bullets = append(p.Bullets.bullets, newBullet(p.x, p.y+(p.h/2), F, F, F, T))
+	}
+
 	if p.movingLeft {
-		p.img = p.imgs[0]
+		p.img = p.imgs[3]
 		p.x -= p.speed
 	}
 	if p.movingRight {
-		p.img = p.imgs[0]
+		p.img = p.imgs[1]
 		p.x += p.speed
 	}
 	if p.movingUp {
-		p.img = p.imgs[1]
+		p.img = p.imgs[0]
 		p.y -= p.speed
 	}
 	if p.movingDown {
-		p.img = p.imgs[1]
+		p.img = p.imgs[2]
 		p.y += p.speed
 	}
 

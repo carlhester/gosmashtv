@@ -17,8 +17,8 @@ type Game struct {
 }
 
 func newGame() *Game {
-	p := newPlayer()
 
+	p := newPlayer()
 	levelEnemies := []*enemy{
 		newEnemy(100, 100, false, false, false, false),
 		newEnemy(150, 100, false, false, false, false),
@@ -30,11 +30,14 @@ func newGame() *Game {
 		p:       p,
 	}
 
+	b := &bullets{enemies: enemies}
+	p.Bullets = b
+
 	return &Game{
 		player:  p,
 		debug:   true,
 		enemies: enemies,
-		bullets: &bullets{player: p, enemies: enemies},
+		bullets: b,
 	}
 }
 
